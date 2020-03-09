@@ -1,0 +1,26 @@
+{
+  "name": "node-red-contrib-animusheart",
+  "version": "0.0.1",
+  "description": "AnimusHeart nodes",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "animus",
+    "heart",
+    "iot",
+    "nexa",
+    "zwave"
+  ],
+  "author": "Jon Börjesson",
+  "license": "ISC",
+  "node-red": {
+    "nodes": {
+      "heart-config": "heart-config.js",
+      "heart-event": "heart-event.js"
+    }
+  },
+  "dependencies": {
+    "jons-animusheart": "github:spuun/node-jons-animusheart"
+  }
+}

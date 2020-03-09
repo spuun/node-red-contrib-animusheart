@@ -1,0 +1,88 @@
+<script type="text/javascript">
+  (RED => {
+    function clearNode(node) {
+      while(node.lastElementChild)
+        node.removeChild(node.lastElementChild)
+    }
+    function populateDevices(heartId, selectedValue) {
+      const devicelist = document.querySelector('#node-input-device')
+      devicelist.disabled = true
+      clearNode(devicelist)
+      if (!heartId || heartId == '_ADD_') return;
+      $.getJSON('/animusheart/' + heartId + '/devices/', devices => {
+        for (const k in devices) {
+          const d = devices[k]
+          devicelist.appendChild(new Option(d.name, d.id, d.id == selectedValue, d.id == selectedValue))
+        }
+        devicelist.disabled = false
+      })
+    }
+    function populateFunctions(heartId, deviceId, selectedValue) {
+      const funclist = document.getElementById('node-input-func')
+      funclist.disabled = true
+      clearNode(funclist)
+      if (!deviceId) return;
+      $.getJSON('/animusheart/' + heartId + '/devices/' + deviceId + '/functions', functions => {
+        funclist.appendChild(new Option('All', '_ALL_', selectedValue === '_ALL_', selectedValue === '_ALL_'))
+        for (const fid in functions) {
+          const f = functions[fid]
+          const serviceProperties = f.serviceProperties
+          const functionProperties = f.functionProperties
+          let opt = null;
+          if (!functionProperties) { continue }
+          if (serviceProperties.property_names.length == 0) { continue }
+          funclist.appendChild(opt = new Option(serviceProperties.name, fid, fid == selectedValue, fid == selectedValue))
+          opt.funcProp = functionProperties
+        }
+        funclist.disabled = false
+      })
+    }
+    RED.nodes.registerType('heart-event', {
+      category: 'Animus Heart',
+      color: '#d5d7d6',
+      defaults: {
+        heart: { value: "", type: "heart-config" },
+        device: { value: "" },
+        func: { value: "" },
+        name: { value: "" }
+      },
+      inputs: 0,
+      outputs: 1,
+      icon: 'font-awesome/fa-heart',
+      label: function() {
+        return this.name || "Heart Event"
+      },
+      oneditprepare: function() {
+        document.querySelector('#node-input-heart')
+          .addEventListener('change', evt => populateDevices(evt.target.value))
+        document.querySelector('#node-input-device')
+          .addEventListener('change', evt => populateFunctions(this.heart, evt.target.value))
+        document.querySelector('#node-input-func')
+          .addEventListener('change', evt => console.log(evt))
+        if (this.heart) {
+          populateDevices(this.heart, this.device)
+          if (this.device) { populateFunctions(this.heart, this.device, this.func) }
+        }
+      }
+    })
+  })(RED)
+</script>
+
+<script type="text/html" data-template-name="heart-event">
+  <div class="form-row">
+    <label for="node-input-heart"><i class="fa fa-heart"></i> Heart</label>
+    <input type="text" id="node-input-heart">
+  </div>
+  <div class="form-row">
+    <label for="node-input-device"><i class="fa fa-mobile-phone"></i> Device</label>
+    <select id="node-input-device"></select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-func"><i class="fa fa-mobile-phone"></i> Function</label>
+    <select id="node-input-func"></select>
+  </div>
+   <div class="form-row">
+    <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+    <input type="text" placeholder="Name" id="node-input-name">
+  </div>
+</script>
