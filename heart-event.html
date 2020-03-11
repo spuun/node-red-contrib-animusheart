@@ -4,6 +4,7 @@
       while(node.lastElementChild)
         node.removeChild(node.lastElementChild)
     }
+
     function populateDevices(heartId, selectedValue) {
       const devicelist = document.querySelector('#node-input-device')
       devicelist.disabled = true
@@ -17,6 +18,7 @@
         devicelist.disabled = false
       })
     }
+
     function populateFunctions(heartId, deviceId, selectedValue) {
       const funclist = document.getElementById('node-input-func')
       funclist.disabled = true
@@ -31,12 +33,14 @@
           let opt = null;
           if (!functionProperties) { continue }
           if (serviceProperties.property_names.length == 0) { continue }
-          funclist.appendChild(opt = new Option(serviceProperties.name, fid, fid == selectedValue, fid == selectedValue))
+          const name = serviceProperties.name || serviceProperties.property_names[0]
+          funclist.appendChild(opt = new Option(name, fid, fid == selectedValue, fid == selectedValue))
           opt.funcProp = functionProperties
         }
         funclist.disabled = false
       })
     }
+
     RED.nodes.registerType('heart-event', {
       category: 'Animus Heart',
       color: '#d5d7d6',
@@ -44,6 +48,7 @@
         heart: { value: "", type: "heart-config" },
         device: { value: "" },
         func: { value: "" },
+        funcopts: { value: "" },
         name: { value: "" }
       },
       inputs: 0,
@@ -80,6 +85,10 @@
   <div class="form-row">
     <label for="node-input-func"><i class="fa fa-mobile-phone"></i> Function</label>
     <select id="node-input-func"></select>
+  </div>
+  <div class="form-row hide" id="heart-event-funcopts">
+    <label id="node-input-funcopts"><i class="fa fa-cog"></i> Options</label>
+    <input type="text" id="node-input-functopts">
   </div>
    <div class="form-row">
     <label for="node-input-name"><i class="icon-tag"></i> Name</label>

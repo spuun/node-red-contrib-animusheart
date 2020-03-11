@@ -7,7 +7,7 @@ module.exports = function(RED) {
   function createOrGetHeart(id) {
     if (!hearts[id]) {
       const node = RED.nodes.getNode(id)
-      hearts[id] = new AnimusHeart(node.host, node.apikey, { logger: node })
+      hearts[id] = new AnimusHeart(node.host, node.apikey, { logger: RED.log })
     }
     return hearts[id]
   }
@@ -50,7 +50,7 @@ module.exports = function(RED) {
   }
 
   HeartConfig.prototype.getHeart = function() {
-    return createOrgetHeart(this.id)
+    return createOrGetHeart(this.id)
   }
 
   RED.nodes.registerType('heart-config', HeartConfig)
