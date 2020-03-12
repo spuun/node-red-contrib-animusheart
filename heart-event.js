@@ -7,6 +7,7 @@ module.exports = function initHeartEvent(RED) {
     if (heart) {
       const handleEvent = event => {
         RED.log.info(event.property)
+        if (event.functionId !== config.func && config.func !== '_ALL_') { return }
         this.send({ payload: event.property })
       }
       this.on('close', _ => heart.events.unsubscribe(handleEvent))
