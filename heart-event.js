@@ -10,7 +10,7 @@ module.exports = function initHeartEvent(RED) {
         if (event.functionId !== config.func && config.func !== '_ALL_') { return }
         this.send({ payload: event.property })
       }
-      this.on('close', _ => heart.events.unsubscribe(handleEvent))
+      this.on('close', done => heart.events.unsubscribe(handleEvent) && done())
       heart.events.subscribe(handleEvent)
     }
   }
